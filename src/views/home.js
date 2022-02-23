@@ -1,0 +1,58 @@
+import React from "react";
+
+import UsuarioService from "../app/service/usuarioService";
+import { AuthContext } from "../main/provedorAutenticacao";
+
+class Home extends React.Component{
+
+    constructor(){
+        super();
+        this.usuarioService = new UsuarioService();
+    }
+
+    state = {
+        saldo: 0
+    }
+
+    componentDidMount(){
+        const usuarioLogado = this.context.usuarioAutenticado
+
+        this.usuarioService
+            .obterSaldoPorUsuario(usuarioLogado.id)
+            .then( response => {
+                 this.setState({saldo: response.data})
+             }).catch( erro => {
+                 console.log(erro.response)
+             })
+    }
+
+    render(){
+        return (
+            <div className="jumbotron">
+                <h1 className="display-3">Bem vindo!</h1>
+                <p className="lead">Esse é seu sistema de finanças.</p>
+                <p className="lead">Seu saldo para o mês atual é de {this.state.saldo}.00 €</p>
+                <hr className="my-4"/>
+                <p>E essa é sua área administrativa, utilize um dos menus ou botões abaixo para navegar pelo sistema.</p>
+                <p className="lead">
+                    <a className="btn btn-primary btn-lg" 
+                        href="#/cadastro-usuarios" 
+                        role="button">  
+                        <i className="pi pi-users mr-2"></i>
+                        Registar Usuário
+                    </a>
+                    <a className="btn btn-danger btn-lg" 
+                        href="#/cadastro-lancamentos" 
+                        role="button">
+                         <i className="pi pi-money-bill mr-2"></i>
+                        Registar Lançamento
+                    </a>
+                </p>
+            </div>
+        )
+    }
+}
+
+Home.contextType = AuthContext
+
+export default Home
